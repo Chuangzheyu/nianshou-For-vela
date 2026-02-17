@@ -1,0 +1,258 @@
+<template>
+  <div class="f">
+    <div class="container">
+      <div class="numf">
+        <image src="/common/ns.png" class="ns" />
+        <text class="num">{{ num }}</text>
+      </div>
+      <div class="guize" @click="ks">
+        <text class="gztxt">规则</text>
+      </div>
+      <div class="logf">
+        <text class="log">{{ a }}</text>
+      </div>
+      <image src="/common/1.png" class="j1" @click="d(1)" show="{{ show }}" />
+      <image src="/common/2.png" class="j2" @click="d(2)" show="{{ show }}" />
+      <image src="/common/3.png" class="j3" @click="d(3)" show="{{ show }}" />
+      <scroll class="trueguizef" scroll-y="true" bounces="true" if="{{ gzshow }}" @click="gs">
+        <text class="trueguize">{{ guize }}</text>
+      </scroll>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  private: {
+    num: 0,
+    a: "暂无操作",
+    tsz: ["", "", "", "", ""],
+    show: true,
+    gzshow: false,
+    guize:
+      "【开局】\n总和=0，目标=21\n\n【玩家回合】\n选1/2/3加到总和\n若正好=21→胜利，年兽被赶走\n若>21→反弹（例：选3变成20，实际加到17）\n\n【年兽回合】\n70%正常：选2/3/4（智能，尽量往21凑）\n30%发疯：随机选1-5（不可预测）\n若正好=21→玩家失败，年兽冲进村子\n若>21→同样反弹\n\n【反弹计算】\n超1→弹回-2（21+1=22→20）\n超2→弹回-4（21+2=23→19）\n超3→弹回-6（21+3=24→18）\n\n【胜利】玩家先到21\n【失败】年兽先到21"
+  },
+  gs() {
+    this.gzshow = false
+  },
+  ks() {
+    this.gzshow = true
+  },
+  end() {
+    this.show = false
+  },
+  log(newlog) {
+    if (this.tsz[0] == "") {
+      this.tsz[0] = newlog
+    } else if (this.tsz[1] == "") {
+      this.tsz[1] = newlog
+    } else if (this.tsz[2] == "") {
+      this.tsz[2] = newlog
+    } else if (this.tsz[3] == "") {
+      this.tsz[3] = newlog
+    } else if (this.tsz[4] == "") {
+      this.tsz[4] = newlog
+    } else {
+      ;(this.tsz[0] = this.tsz[1]),
+        (this.tsz[1] = this.tsz[2]),
+        (this.tsz[2] = this.tsz[3]),
+        (this.tsz[3] = this.tsz[4]),
+        (this.tsz[4] = newlog)
+    }
+    this.a =
+      this.tsz[0] +
+      "\n" +
+      this.tsz[1] +
+      "\n" +
+      this.tsz[2] +
+      "\n" +
+      this.tsz[3] +
+      "\n" +
+      this.tsz[4]
+    if (newlog == "退出重玩") {
+      this.end()
+    }
+  },
+  d(s) {
+    this.num += s
+    this.log("(你选择了+" + s)
+
+    if (this.num == 21) {
+      this.log("年兽被赶跑")
+      this.log("退出重玩")
+      return
+    } else if (this.num > 21) {
+      const fts = (this.num - 21) * 2
+      this.num -= fts
+      this.log("反弹" + fts)
+      if (this.num == 21) {
+        this.log("年兽被赶跑")
+        this.log("退出重玩")
+        return
+      }
+    }
+
+    const sjs = Math.floor(Math.random() * 10 + 1)
+    if (sjs > 3) {
+      const n = Math.floor(Math.random() * 3 + 2)
+      this.num += n
+      this.log("年兽选择+" + n + ")")
+    } else {
+      const n = Math.floor(Math.random() * 5 + 1)
+      this.num += n
+      this.log("年兽发疯选择+" + n + ")")
+    }
+
+    if (this.num == 21) {
+      this.log("年兽进入了村庄")
+      this.log("退出重玩")
+    } else if (this.num > 21) {
+      const fts = (this.num - 21) * 2
+      this.num -= fts
+      this.log("反弹" + fts + ")")
+      if (this.num == 21) {
+        this.log("年兽进入了村庄")
+        this.log("退出重玩")
+      }
+    }
+  }
+}
+</script>
+
+<style>
+.f {
+  flex-direction: column;
+  background-color: #ff0000;
+}
+.container {
+  position: absolute;
+  left: 72px;
+  width: 192px;
+  height: 490px;
+  background-color: #ff0000;
+}
+@media (shape: pill-shaped) {
+  .container {
+    position: absolute;
+    left: 0px;
+    width: 192px;
+    height: 490px;
+    background-color: #ff0000;
+  }
+}
+.numf {
+  position: absolute;
+  left: 5px;
+  top: 50px;
+  width: 182px;
+  height: 97px;
+  border-radius: 27px;
+  background-color: #ff0000;
+  box-sizing: border-box;
+  border: 6px solid #ffffff;
+}
+.num {
+  position: absolute;
+  left: 110px;
+  top: 16px;
+  font-size: 44px;
+  font-weight: 1000;
+  line-height: normal;
+  text-align: center;
+  color: #ffffff;
+}
+.logf {
+  position: absolute;
+  left: 5px;
+  top: 201px;
+  width: 182px;
+  height: 148px;
+  border-radius: 27px;
+  background-color: #ff0000;
+  box-sizing: border-box;
+  border: 6px solid #ffffff;
+  padding-bottom: 2px;
+}
+.log {
+  position: absolute;
+  left: 8px;
+  top: 2px;
+  width: 160px;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: normal;
+  color: #ffffff;
+}
+.j1 {
+  position: absolute;
+  left: 5px;
+  top: 356px;
+  width: 87.9px;
+  height: 55.75px;
+}
+.j2 {
+  position: absolute;
+  left: 99px;
+  top: 356px;
+  width: 87.9px;
+  height: 55.75px;
+}
+.j3 {
+  position: absolute;
+  left: 52px;
+  top: 419px;
+  width: 87.9px;
+  height: 55.75px;
+}
+.guize {
+  position: absolute;
+  left: 5px;
+  top: 154px;
+  width: 182px;
+  height: 40px;
+  border-radius: 18px;
+  background-color: #ff0000;
+  box-sizing: border-box;
+  border: 6px solid #ffffff;
+}
+.gztxt {
+  position: absolute;
+  left: 62px;
+  top: 1px;
+  width: 44px;
+  height: 29px;
+  font-size: 22px;
+  font-weight: 600;
+  line-height: normal;
+  text-align: center;
+  color: #ffffff;
+}
+.trueguizef {
+  position: absolute;
+  left: 22px;
+  top: 129px;
+  width: 148px;
+  height: 249px;
+  border-radius: 22px;
+  background-color: #ff0000;
+  box-sizing: border-box;
+  border: 6px solid #ffffff;
+}
+.trueguize {
+  position: absolute;
+  top: 2px;
+  width: 100%;
+  height: 1400px;
+  font-size: 22px;
+  font-weight: 600;
+  line-height: normal;
+  color: #ffffff;
+}
+.ns {
+  position: absolute;
+  left: 10px;
+  top: 0px;
+  width: 90px;
+  height: 99.53px;
+}
+</style>
